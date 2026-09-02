@@ -10,23 +10,33 @@ import {
 import { validate } from "../middlewares/validate";
 
 import { createContactSchema } from "../validators/contact.validator";
+import { authenticate } from "../middlewares/auth.middleware";
 
 const router = Router();
 
-// CREATE contact message
 router.post(
   "/",
   validate(createContactSchema),
   createSingleContactMessage
 );
 
-// GET all contact messages
-router.get("/", getAllContactMessages);
+router.get(
+  "/",
+  authenticate,
+  getAllContactMessages
+);
 
-// GET single contact message
-router.get("/:id", getSingleContactMessage);
+router.get(
+  "/:id",
+  authenticate,
+  getSingleContactMessage
+);
 
-// MARK contact message as read
-router.patch("/:id/read", markSingleContactMessageAsRead);
+router.patch(
+  "/:id/read",
+  authenticate,
+  markSingleContactMessageAsRead
+);
+
 
 export default router;

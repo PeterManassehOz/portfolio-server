@@ -12,6 +12,8 @@ const envSchema = z.object({
 
   CLIENT_URL: z.url(),
 
+  ADMIN_URL: z.url(),
+
   CLOUDINARY_CLOUD_NAME: z
     .string()
     .min(1, "CLOUDINARY_CLOUD_NAME is required"),
@@ -33,6 +35,15 @@ const envSchema = z.object({
   BREVO_AI_API_KEY: z
     .string()
     .min(1, "BREVO_AI_API_KEY is required"),
+
+  JWT_SECRET: z
+    .string()
+    .min(32, "JWT_SECRET must be at least 32 characters"),
+    
+  JWT_EXPIRES_IN: z
+    .string()
+    .default("1d"),
+
 });
 
 

@@ -14,6 +14,7 @@ import {
   createEducationSchema,
   updateEducationSchema,
 } from "../validators/education.validator";
+import { authenticate } from "../middlewares/auth.middleware";
 
 const router = Router();
 
@@ -23,18 +24,21 @@ router.get("/:id", getEducationByIdController);
 
 router.post(
   "/",
+  authenticate,
   validate(createEducationSchema),
   createEducationController
 );
 
 router.patch(
   "/:id",
+  authenticate,
   validate(updateEducationSchema),
   updateEducationController
 );
 
 router.delete(
   "/:id",
+  authenticate,
   deleteEducationController
 );
 

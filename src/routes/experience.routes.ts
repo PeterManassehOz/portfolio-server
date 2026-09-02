@@ -14,6 +14,8 @@ import {
   createExperienceSchema,
   updateExperienceSchema,
 } from "../validators/experience.validator";
+import { authenticate } from "../middlewares/auth.middleware.js";
+
 
 const router = Router();
 
@@ -25,22 +27,21 @@ router.get("/", getAllExperiences);
 
 router.post(
   "/",
+  authenticate,
   validate(createExperienceSchema),
   createNewExperience
 );
 
-// UPDATE experience
-
 router.patch(
   "/:id",
+  authenticate,
   validate(updateExperienceSchema),
   updateExistingExperience
 );
 
-// DELETE experience
-
 router.delete(
   "/:id",
+  authenticate,
   deleteSingleExperience
 );
 

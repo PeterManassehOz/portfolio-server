@@ -15,6 +15,7 @@ import {
   createProjectSchema,
   updateProjectSchema,
 } from "../validators/projects.validator";
+import { authenticate } from "../middlewares/auth.middleware";
 
 const router = Router();
 
@@ -24,23 +25,23 @@ router.get("/", getAllProjects);
 // GET featured projects
 router.get("/featured", getFeatured);
 
-// CREATE project
 router.post(
   "/",
+  authenticate,
   validate(createProjectSchema),
   createSingleProject
 );
 
-// UPDATE project
 router.patch(
   "/:slug",
+  authenticate,
   validate(updateProjectSchema),
   updateSingleProject
 );
 
-// DELETE project
 router.delete(
   "/:slug",
+  authenticate,
   deleteSingleProject
 );
 

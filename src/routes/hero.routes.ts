@@ -13,6 +13,7 @@ import {
   createHeroSchema,
   updateHeroSchema,
 } from "../validators/hero.validator";
+import { authenticate } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
@@ -22,6 +23,7 @@ router.get("/", getHeroContent);
 // CREATE hero content
 router.post(
   "/",
+  authenticate,
   validate(createHeroSchema),
   createHeroContent
 );
@@ -29,6 +31,7 @@ router.post(
 // UPDATE hero content
 router.patch(
   "/",
+  authenticate,
   validate(updateHeroSchema),
   updateHeroContent
 );
@@ -36,6 +39,7 @@ router.patch(
 // DELETE hero content
 router.delete(
   "/",
+  authenticate,
   deleteHeroContent
 );
 

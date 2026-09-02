@@ -8,6 +8,7 @@ import contactRoutes from "./contact.routes.js";
 import educationRoutes from "./education.routes.js";
 import experienceRoutes from "./experience.routes.js";
 import heroRoutes from "./hero.routes.js";
+import authRoutes from "./auth.routes.js";
 
 const router = Router();
 
@@ -25,5 +26,7 @@ router.use("/education", educationRoutes);
 router.use("/experience", experienceRoutes);
 
 router.use("/hero", heroRoutes);
+
+router.use("/auth", authRoutes);
 
 export default router;
