@@ -8,6 +8,8 @@ import {
   loginAdmin,
   forgotPassword,
   resetPassword,
+  getCurrentAdmin,
+  changePassword
 } from "../services/auth.service.js";
 
 export const login = async (
@@ -57,6 +59,46 @@ export const resetPasswordController = async (
     res.status(200).json({
       success: true,
       message: "Password reset successful",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMe = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const admin = await getCurrentAdmin(
+      req.admin!.id
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Authenticated admin retrieved successfully",
+      data: admin,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const changePasswordController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await changePassword(
+      req.admin!.id,
+      req.body
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Password changed successfully",
     });
   } catch (error) {
     next(error);

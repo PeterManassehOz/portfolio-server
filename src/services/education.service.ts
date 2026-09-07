@@ -1,38 +1,55 @@
 import { Types } from "mongoose";
 
-import { EducationModel } from "../models/education.model";
+import { EducationModel } from "../models/education.model.js";
 
 import type {
   Education,
   CreateEducationInput,
   UpdateEducationInput,
-} from "../types/education";
+} from "../types/education.js";
 
-export const getEducation = async (): Promise<Education[]> => {
-  return EducationModel.find()
-    .sort({ createdAt: 1 })
-    .lean<Education[]>()
-    .exec();
-};
+import { AppError } from "../utils/app-error.js";
+
+export const getEducation =
+  async (): Promise<Education[]> => {
+    return EducationModel.find()
+      .sort({ createdAt: 1 })
+      .lean<Education[]>()
+      .exec();
+  };
 
 export const getEducationById = async (
   id: string
-): Promise<Education | null> => {
+): Promise<Education> => {
   if (!Types.ObjectId.isValid(id)) {
-    return null;
+    throw new AppError(
+      "Invalid education ID",
+      400
+    );
   }
 
-  return EducationModel.findById(id)
-    .lean<Education>()
-    .exec();
+  const education =
+    await EducationModel.findById(id)
+      .lean<Education>()
+      .exec();
+
+  if (!education) {
+    throw new AppError(
+      "Education record not found",
+      404
+    );
+  }
+
+  return education;
 };
 
 export const createEducation = async (
   educationData: CreateEducationInput
 ): Promise<Education> => {
-  const education = await EducationModel.create(
-    educationData
-  );
+  const education =
+    await EducationModel.create(
+      educationData
+    );
 
   return education.toObject() as Education;
 };
@@ -40,31 +57,57 @@ export const createEducation = async (
 export const updateEducation = async (
   id: string,
   educationData: UpdateEducationInput
-): Promise<Education | null> => {
+): Promise<Education> => {
   if (!Types.ObjectId.isValid(id)) {
-    return null;
+    throw new AppError(
+      "Invalid education ID",
+      400
+    );
   }
 
-  return EducationModel.findByIdAndUpdate(
-    id,
-    educationData,
-    {
-      new: true,
-      runValidators: true,
-    }
-  )
-    .lean<Education>()
-    .exec();
+  const education =
+    await EducationModel.findByIdAndUpdate(
+      id,
+      educationData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    )
+      .lean<Education>()
+      .exec();
+
+  if (!education) {
+    throw new AppError(
+      "Education record not found",
+      404
+    );
+  }
+
+  return education;
 };
 
 export const deleteEducation = async (
   id: string
-): Promise<Education | null> => {
+): Promise<Education> => {
   if (!Types.ObjectId.isValid(id)) {
-    return null;
+    throw new AppError(
+      "Invalid education ID",
+      400
+    );
   }
 
-  return EducationModel.findByIdAndDelete(id)
-    .lean<Education>()
-    .exec();
+  const education =
+    await EducationModel.findByIdAndDelete(id)
+      .lean<Education>()
+      .exec();
+
+  if (!education) {
+    throw new AppError(
+      "Education record not found",
+      404
+    );
+  }
+
+  return education;
 };

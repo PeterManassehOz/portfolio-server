@@ -9,7 +9,9 @@ import {
   createHero,
   updateHero,
   deleteHero,
-} from "../services/hero.service";
+  uploadHeroImage,
+} from "../services/hero.service.js";
+
 
 export const getHeroContent = async (
   _req: Request,
@@ -43,11 +45,33 @@ export const createHeroContent = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const hero = await createHero(req.body);
+    if (!req.file) {
+      res.status(400).json({
+        success: false,
+        message:
+          "Profile image is required",
+      });
+
+      return;
+    }
+
+    const uploadedImage =
+      await uploadHeroImage(
+        req.file.buffer
+      );
+
+    const hero = await createHero({
+      ...req.body,
+      profileImage:
+        uploadedImage.url,
+      profileImagePublicId:
+        uploadedImage.publicId,
+    });
 
     res.status(201).json({
       success: true,
-      message: "Hero content created successfully",
+      message:
+        "Hero content created successfully",
       data: hero,
     });
   } catch (error) {
@@ -62,9 +86,10 @@ export const updateHeroContent = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const hero = await updateHero(req.body);
+    const existingHero =
+      await getHero();
 
-    if (!hero) {
+    if (!existingHero) {
       res.status(404).json({
         success: false,
         message: "Hero content not found",
@@ -73,9 +98,31 @@ export const updateHeroContent = async (
       return;
     }
 
+    let profileImageData = {};
+
+    if (req.file) {
+      const uploadedImage =
+        await uploadHeroImage(
+          req.file.buffer
+        );
+
+      profileImageData = {
+        profileImage:
+          uploadedImage.url,
+        profileImagePublicId:
+          uploadedImage.publicId,
+      };
+    }
+
+    const hero = await updateHero({
+      ...req.body,
+      ...profileImageData,
+    });
+
     res.status(200).json({
       success: true,
-      message: "Hero content updated successfully",
+      message:
+        "Hero content updated successfully",
       data: hero,
     });
   } catch (error) {
@@ -83,14 +130,14 @@ export const updateHeroContent = async (
   }
 };
 
-
 export const deleteHeroContent = async (
   _req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const hero = await deleteHero();
+    const hero =
+      await deleteHero();
 
     if (!hero) {
       res.status(404).json({
@@ -103,7 +150,8 @@ export const deleteHeroContent = async (
 
     res.status(200).json({
       success: true,
-      message: "Hero content deleted successfully",
+      message:
+        "Hero content deleted successfully",
       data: hero,
     });
   } catch (error) {

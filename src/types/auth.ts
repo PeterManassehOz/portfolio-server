@@ -22,6 +22,11 @@ export interface LoginResponse {
   };
 }
 
+export interface ChangePasswordInput {
+  currentPassword: string;
+  newPassword: string;
+}
+
 declare global {
   namespace Express {
     interface Request {

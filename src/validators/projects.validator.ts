@@ -35,11 +35,14 @@ export const createProjectSchema = z.object({
 
   title: z.string().trim().min(1),
 
-  shortDescription: z.string().trim().min(1),
+  shortDescription: z
+    .string()
+    .trim()
+    .min(1),
 
   description: z.string().trim().min(1),
 
-  image: projectImageSchema,
+  image: projectImageSchema.optional(),
 
   category: z.string().trim().min(1),
 
@@ -74,7 +77,11 @@ export const createProjectSchema = z.object({
 
   featured: z.boolean().default(false),
 
-  order: z.number().int().min(0).default(0),
+  order: z
+    .number()
+    .int()
+    .min(0)
+    .default(0),
 
   showcase: projectShowcaseSchema,
 });

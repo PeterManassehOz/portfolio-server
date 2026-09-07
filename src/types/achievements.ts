@@ -5,8 +5,15 @@ export interface Achievement {
   date?: string;
   organization?: string;
   url?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export type CreateAchievementInput = Omit<Achievement, "_id">;
 
-export type UpdateAchievementInput = Partial<CreateAchievementInput>;
+export type CreateAchievementInput = Omit<
+  Achievement,
+  "_id" | "createdAt" | "updatedAt"
+>;
+
+export type UpdateAchievementInput =
+  Partial<CreateAchievementInput>;

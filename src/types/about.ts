@@ -1,4 +1,5 @@
 export interface About {
+  _id: string;
   eyebrow: string;
   heading: string;
   introduction: string;
@@ -8,4 +9,14 @@ export interface About {
   availability: string;
   primaryFocus: string;
   coreStack: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
+
+export type CreateAboutInput = Omit<
+  About,
+  "_id"
+>;
+
+export type UpdateAboutInput =
+  Partial<CreateAboutInput>;

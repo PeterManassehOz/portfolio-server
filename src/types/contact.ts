@@ -3,4 +3,6 @@ export interface ContactMessage {
   email: string;
   message: string;
   status: "New" | "Read";
+  createdAt: Date;
+  updatedAt: Date;
 }

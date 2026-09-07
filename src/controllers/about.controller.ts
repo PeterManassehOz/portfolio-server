@@ -7,7 +7,10 @@ import {
   deleteAbout,
 } from "../services/about.service";
 
-import type { About } from "../types/about";
+import type {
+  CreateAboutInput,
+  UpdateAboutInput,
+} from "../types/about";
 
 export const getAboutController = async (
   _req: Request,
@@ -42,7 +45,7 @@ export const createAboutController = async (
 ): Promise<void> => {
   try {
     const about = await createAbout(
-      req.body as About
+      req.body as CreateAboutInput
     );
 
     res.status(201).json({
@@ -62,7 +65,7 @@ export const updateAboutController = async (
 ): Promise<void> => {
   try {
     const about = await updateAbout(
-      req.body as Partial<About>
+      req.body as UpdateAboutInput
     );
 
     if (!about) {

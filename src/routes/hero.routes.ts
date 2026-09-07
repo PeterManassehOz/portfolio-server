@@ -5,25 +5,32 @@ import {
   createHeroContent,
   updateHeroContent,
   deleteHeroContent,
-} from "../controllers/hero.controller";
+} from "../controllers/hero.controller.js";
 
-import { validate } from "../middlewares/validate";
+import { validate } from "../middlewares/validate.js";
 
 import {
   createHeroSchema,
   updateHeroSchema,
-} from "../validators/hero.validator";
+} from "../validators/hero.validator.js";
+
 import { authenticate } from "../middlewares/auth.middleware.js";
+
+import { uploadImage } from "../middlewares/upload.middleware.js";
 
 const router = Router();
 
 // GET hero content
-router.get("/", getHeroContent);
+router.get(
+  "/",
+  getHeroContent
+);
 
 // CREATE hero content
 router.post(
   "/",
   authenticate,
+  uploadImage.single("profileImage"),
   validate(createHeroSchema),
   createHeroContent
 );
@@ -32,6 +39,7 @@ router.post(
 router.patch(
   "/",
   authenticate,
+  uploadImage.single("profileImage"),
   validate(updateHeroSchema),
   updateHeroContent
 );

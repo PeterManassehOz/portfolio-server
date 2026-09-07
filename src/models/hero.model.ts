@@ -63,6 +63,11 @@ const heroSchema = new Schema<Hero>(
       required: true,
       trim: true,
     },
+
+    profileImagePublicId: {
+      type: String,
+      trim: true,
+    },
   },
   { timestamps: true }
 );

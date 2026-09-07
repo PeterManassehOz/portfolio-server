@@ -13,6 +13,7 @@ import type {
   AuthenticatedAdmin,
   LoginInput,
   LoginResponse,
+  ChangePasswordInput,
 } from "../types/auth.js";
 
 import { AppError } from "../utils/app-error.js";
@@ -74,7 +75,10 @@ export const createAdmin = async (
     .exec();
 
   if (existingAdmin) {
-    throw new Error("An admin with this email already exists");
+    throw new AppError(
+      "An admin with this email already exists",
+      409
+    );
   }
 
   const hashedPassword = await hashPassword(
@@ -199,71 +203,286 @@ export const forgotPassword = async (
       to: admin.email,
       subject: "Reset your portfolio admin password",
       htmlContent: `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <h2>Password Reset Request</h2>
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1.0"
+            />
+            <title>Reset Your Password</title>
+          </head>
 
-          <p>
-            Hello ${admin.firstName},
-          </p>
-
-          <p>
-            We received a request to reset your
-            portfolio admin password.
-          </p>
-
-          <p>
-            Click the button below to create a new password.
-          </p>
-
-          <p>
-            <a
-              href="${resetUrl}"
-              style="
-                display: inline-block;
-                padding: 12px 20px;
-                background: #052659;
-                color: #ffffff;
-                text-decoration: none;
-                border-radius: 6px;
-              "
+          <body
+            style="
+              margin: 0;
+              padding: 0;
+              background-color: #f4f7fb;
+              font-family: Arial, Helvetica, sans-serif;
+              color: #1f2937;
+            "
+          >
+            <table
+              width="100%"
+              cellpadding="0"
+              cellspacing="0"
+              border="0"
+              style="background-color: #f4f7fb; padding: 40px 16px;"
             >
-              Reset Password
-            </a>
-          </p>
+              <tr>
+                <td align="center">
 
-          <p>
-            This link will expire in <strong>1 hour</strong>.
-          </p>
+                  <!-- Main Container -->
+                  <table
+                    width="100%"
+                    cellpadding="0"
+                    cellspacing="0"
+                    border="0"
+                    style="
+                      max-width: 600px;
+                      background-color: #ffffff;
+                      border-radius: 14px;
+                      overflow: hidden;
+                      box-shadow: 0 4px 18px rgba(5, 38, 89, 0.08);
+                    "
+                  >
 
-          <p>
-            If you did not request a password reset,
-            you can safely ignore this email.
-          </p>
+                    <!-- Header -->
+                    <tr>
+                      <td
+                        style="
+                          background-color: #052659;
+                          padding: 30px 40px;
+                          text-align: center;
+                        "
+                      >
+                        <h1
+                          style="
+                            margin: 0;
+                            color: #ffffff;
+                            font-size: 24px;
+                            font-weight: 700;
+                            letter-spacing: 0.3px;
+                          "
+                        >
+                          Portfolio Admin
+                        </h1>
 
-          <p>
-            Regards,<br />
-            Portfolio Admin
-          </p>
-        </div>
+                        <p
+                          style="
+                            margin: 8px 0 0;
+                            color: #c1e8ff;
+                            font-size: 14px;
+                          "
+                        >
+                          Secure account management
+                        </p>
+                      </td>
+                    </tr>
+
+                    <!-- Content -->
+                    <tr>
+                      <td style="padding: 40px;">
+
+                        <h2
+                          style="
+                            margin: 0 0 20px;
+                            color: #052659;
+                            font-size: 24px;
+                            line-height: 1.3;
+                          "
+                        >
+                          Reset your password
+                        </h2>
+
+                        <p
+                          style="
+                            margin: 0 0 18px;
+                            font-size: 15px;
+                            line-height: 1.7;
+                            color: #374151;
+                          "
+                        >
+                          Hello ${admin.firstName},
+                        </p>
+
+                        <p
+                          style="
+                            margin: 0 0 18px;
+                            font-size: 15px;
+                            line-height: 1.7;
+                            color: #374151;
+                          "
+                        >
+                          We received a request to reset the password
+                          for your <strong>Portfolio Admin</strong> account.
+                        </p>
+
+                        <p
+                          style="
+                            margin: 0 0 28px;
+                            font-size: 15px;
+                            line-height: 1.7;
+                            color: #374151;
+                          "
+                        >
+                          If you made this request, click the button
+                          below to create a new password.
+                        </p>
+
+                        <!-- CTA -->
+                        <table
+                          width="100%"
+                          cellpadding="0"
+                          cellspacing="0"
+                          border="0"
+                        >
+                          <tr>
+                            <td align="center">
+                              <a
+                                href="${resetUrl}"
+                                style="
+                                  display: inline-block;
+                                  background-color: #052659;
+                                  color: #ffffff;
+                                  text-decoration: none;
+                                  font-size: 15px;
+                                  font-weight: 600;
+                                  padding: 14px 28px;
+                                  border-radius: 8px;
+                                "
+                              >
+                                Reset Password
+                              </a>
+                            </td>
+                          </tr>
+                        </table>
+
+                        <!-- Expiration Notice -->
+                        <table
+                          width="100%"
+                          cellpadding="0"
+                          cellspacing="0"
+                          border="0"
+                          style="
+                            margin-top: 30px;
+                            background-color: #f0f7ff;
+                            border-left: 4px solid #7da0ca;
+                            border-radius: 6px;
+                          "
+                        >
+                          <tr>
+                            <td
+                              style="
+                                padding: 14px 16px;
+                                font-size: 14px;
+                                line-height: 1.6;
+                                color: #374151;
+                              "
+                            >
+                              <strong>Security notice:</strong>
+                              This password reset link will expire
+                              in <strong>1 hour</strong>.
+                            </td>
+                          </tr>
+                        </table>
+
+                        <p
+                          style="
+                            margin: 28px 0 0;
+                            font-size: 14px;
+                            line-height: 1.7;
+                            color: #6b7280;
+                          "
+                        >
+                          If you did not request a password reset,
+                          no action is required. Your account remains
+                          secure and you can safely ignore this email.
+                        </p>
+
+                        <p
+                          style="
+                            margin: 28px 0 0;
+                            font-size: 15px;
+                            line-height: 1.6;
+                            color: #374151;
+                          "
+                        >
+                          Regards,<br />
+                          <strong>Portfolio Admin</strong>
+                        </p>
+
+                      </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                      <td
+                        style="
+                          background-color: #f8fafc;
+                          padding: 24px 40px;
+                          text-align: center;
+                          border-top: 1px solid #e5e7eb;
+                        "
+                      >
+                        <p
+                          style="
+                            margin: 0;
+                            font-size: 12px;
+                            line-height: 1.6;
+                            color: #9ca3af;
+                          "
+                        >
+                          This is an automated security email.
+                          Please do not reply to this message.
+                        </p>
+
+                        <p
+                          style="
+                            margin: 8px 0 0;
+                            font-size: 12px;
+                            color: #9ca3af;
+                          "
+                        >
+                          © ${new Date().getFullYear()} Portfolio Admin
+                        </p>
+                      </td>
+                    </tr>
+
+                  </table>
+
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
       `,
 
       textContent: `
-Password Reset Request
+      Portfolio Admin
+      Secure account management
 
-Hello ${admin.firstName},
+      Reset your password
 
-We received a request to reset your portfolio admin password.
+      Hello ${admin.firstName},
 
-Reset your password using this link:
+      We received a request to reset the password for your Portfolio Admin account.
 
-${resetUrl}
+      If you made this request, use the link below to create a new password:
 
-This link will expire in 1 hour.
+      ${resetUrl}
 
-If you did not request a password reset, you can safely ignore this email.
+      Security notice:
+      This password reset link will expire in 1 hour.
 
-Regards,
-Portfolio Admin
+      If you did not request a password reset, no action is required. Your account remains secure and you can safely ignore this email.
+
+      Regards,
+      Portfolio Admin
+
+      This is an automated security email.
+      © ${new Date().getFullYear()} Portfolio Admin
       `,
     });
   } catch (error) {
@@ -335,4 +554,66 @@ export const resetPassword = async (
   await PasswordResetTokenModel.deleteMany({
     adminId: resetToken.adminId,
   });
+};
+
+
+export const getCurrentAdmin = async (
+  adminId: string
+): Promise<LoginResponse["admin"]> => {
+  const admin = await AdminModel.findById(adminId)
+    .select("_id firstName lastName email role")
+    .exec();
+
+  if (!admin) {
+    throw new AppError(
+      "Admin account not found",
+      404
+    );
+  }
+
+  return {
+    id: admin._id.toString(),
+    firstName: admin.firstName,
+    lastName: admin.lastName,
+    email: admin.email,
+    role: admin.role,
+  };
+};
+
+export const changePassword = async (
+  adminId: string,
+  input: ChangePasswordInput
+): Promise<void> => {
+  const admin =
+    await AdminModel.findById(adminId)
+      .select("+password");
+
+  if (!admin) {
+    throw new AppError(
+      "Admin account not found",
+      404
+    );
+  }
+
+  const isCurrentPasswordValid =
+    await comparePassword(
+      input.currentPassword,
+      admin.password
+    );
+
+  if (!isCurrentPasswordValid) {
+    throw new AppError(
+      "Current password is incorrect",
+      400
+    );
+  }
+
+  const hashedPassword =
+    await hashPassword(
+      input.newPassword
+    );
+
+  admin.password = hashedPassword;
+
+  await admin.save();
 };

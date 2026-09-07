@@ -1,5 +1,7 @@
-import { BREVO_API_URL, brevoHeaders } from "../config/brevo.js";
+import nodemailer from "nodemailer";
+
 import { env } from "../config/env.js";
+import { AppError } from "../utils/app-error.js";
 
 export interface SendEmailOptions {
   to: string;
@@ -9,6 +11,15 @@ export interface SendEmailOptions {
   replyTo?: string;
 }
 
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+
+  auth: {
+    user: env.EMAIL_USER,
+    pass: env.EMAIL_PASS,
+  },
+});
+
 export const sendEmail = async ({
   to,
   subject,
@@ -16,41 +27,33 @@ export const sendEmail = async ({
   textContent,
   replyTo,
 }: SendEmailOptions): Promise<void> => {
-  const response = await fetch(BREVO_API_URL, {
-    method: "POST",
-    headers: brevoHeaders,
-    body: JSON.stringify({
-      sender: {
-        email: env.EMAIL_FROM,
-      },
+  try {
+    await transporter.sendMail({
+      from: env.EMAIL_FROM,
 
-      to: [
-        {
-          email: to,
-        },
-      ],
+      to,
 
       subject,
 
-      htmlContent,
+      html: htmlContent,
 
       ...(textContent && {
-        textContent,
+        text: textContent,
       }),
 
       ...(replyTo && {
-        replyTo: {
-          email: replyTo,
-        },
+        replyTo,
       }),
-    }),
-  });
+    });
+  } catch (error) {
+    console.error(
+      "❌ Gmail email failed:",
+      error
+    );
 
-  if (!response.ok) {
-    const errorBody = await response.text();
-
-    throw new Error(
-      `Brevo email failed (${response.status}): ${errorBody}`
+    throw new AppError(
+      "Unable to send email. Please try again later.",
+      503
     );
   }
 };

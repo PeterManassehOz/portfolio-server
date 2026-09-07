@@ -38,4 +38,6 @@ export interface Project {
   featured: boolean;
   order: number;
   showcase: ProjectShowcase;
+  createdAt: Date;
+  updatedAt: Date;
 }

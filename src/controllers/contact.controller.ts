@@ -4,6 +4,7 @@ import {
   createContactMessage,
   getContactMessages,
   getContactMessageById,
+  getUnreadContactMessageCount,
   markContactMessageAsRead,
 } from "../services/contact.service";
 
@@ -36,6 +37,26 @@ export const getAllContactMessages = async (
     res.status(200).json({
       success: true,
       data: messages,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUnreadContactMessages = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const count =
+      await getUnreadContactMessageCount();
+
+    res.status(200).json({
+      success: true,
+      data: {
+        count,
+      },
     });
   } catch (error) {
     next(error);

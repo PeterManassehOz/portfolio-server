@@ -15,7 +15,14 @@ import {
   createProjectSchema,
   updateProjectSchema,
 } from "../validators/projects.validator";
+
 import { authenticate } from "../middlewares/auth.middleware";
+
+import { uploadProjectImages } from "../middlewares/upload.middleware";
+
+import {
+  parseProjectFormData,
+} from "../middlewares/parse-project-form-data";
 
 const router = Router();
 
@@ -28,6 +35,17 @@ router.get("/featured", getFeatured);
 router.post(
   "/",
   authenticate,
+  uploadProjectImages.fields([
+    {
+      name: "image",
+      maxCount: 1,
+    },
+    {
+      name: "showcaseImages",
+      maxCount: 10,
+    },
+  ]),
+  parseProjectFormData,
   validate(createProjectSchema),
   createSingleProject
 );
@@ -35,9 +53,21 @@ router.post(
 router.patch(
   "/:slug",
   authenticate,
+  uploadProjectImages.fields([
+    {
+      name: "image",
+      maxCount: 1,
+    },
+    {
+      name: "showcaseImages",
+      maxCount: 10,
+    },
+  ]),
+  parseProjectFormData,
   validate(updateProjectSchema),
   updateSingleProject
 );
+
 
 router.delete(
   "/:slug",

@@ -1,5 +1,12 @@
-import { AboutModel } from "../models/about.model";
-import type { About } from "../types/about";
+import { AboutModel } from "../models/about.model.js";
+
+import type {
+  About,
+  CreateAboutInput,
+  UpdateAboutInput,
+} from "../types/about.js";
+
+import { AppError } from "../utils/app-error.js";
 
 export const getAbout = async (): Promise<About | null> => {
   return AboutModel.findOne()
@@ -8,38 +15,63 @@ export const getAbout = async (): Promise<About | null> => {
 };
 
 export const createAbout = async (
-  aboutData: About
+  aboutData: CreateAboutInput
 ): Promise<About> => {
-  const existingAbout = await AboutModel.findOne()
-    .lean()
-    .exec();
+  const existingAbout =
+    await AboutModel.findOne()
+      .lean()
+      .exec();
 
   if (existingAbout) {
-    throw new Error("About information already exists");
+    throw new AppError(
+      "About information already exists",
+      409
+    );
   }
 
-  const about = await AboutModel.create(aboutData);
+  const about =
+    await AboutModel.create(aboutData);
 
   return about.toObject() as About;
 };
 
 export const updateAbout = async (
-  aboutData: Partial<About>
-): Promise<About | null> => {
-  return AboutModel.findOneAndUpdate(
-    {},
-    aboutData,
-    {
-      new: true,
-      runValidators: true,
-    }
-  )
-    .lean<About>()
-    .exec();
+  aboutData: UpdateAboutInput
+): Promise<About> => {
+  const about =
+    await AboutModel.findOneAndUpdate(
+      {},
+      aboutData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    )
+      .lean<About>()
+      .exec();
+
+  if (!about) {
+    throw new AppError(
+      "About information not found",
+      404
+    );
+  }
+
+  return about;
 };
 
-export const deleteAbout = async (): Promise<About | null> => {
-  return AboutModel.findOneAndDelete({})
-    .lean<About>()
-    .exec();
+export const deleteAbout = async (): Promise<About> => {
+  const about =
+    await AboutModel.findOneAndDelete({})
+      .lean<About>()
+      .exec();
+
+  if (!about) {
+    throw new AppError(
+      "About information not found",
+      404
+    );
+  }
+
+  return about;
 };

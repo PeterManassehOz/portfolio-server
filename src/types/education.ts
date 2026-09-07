@@ -6,6 +6,8 @@ export interface Education {
   startDate: string;
   endDate: string;
   description?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type CreateEducationInput = Omit<Education, "_id">;

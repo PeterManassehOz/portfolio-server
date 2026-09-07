@@ -4,6 +4,7 @@ import {
   createSingleContactMessage,
   getAllContactMessages,
   getSingleContactMessage,
+  getUnreadContactMessages,
   markSingleContactMessageAsRead,
 } from "../controllers/contact.controller";
 
@@ -24,6 +25,12 @@ router.get(
   "/",
   authenticate,
   getAllContactMessages
+);
+
+router.get(
+  "/unread-count",
+  authenticate,
+  getUnreadContactMessages
 );
 
 router.get(

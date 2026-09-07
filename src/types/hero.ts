@@ -10,6 +10,9 @@ export interface Hero {
   availability: string;
   resumeUrl: string;
   profileImage: string;
+  profileImagePublicId?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type CreateHeroInput = Omit<Hero, "_id">;
