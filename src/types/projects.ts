@@ -16,6 +16,7 @@ export interface ProjectHighlight {
 
 export interface ProjectShowcase {
   overview: string;
+  whatItDoes: string[];
   contribution: string[];
   impact?: string[];
   highlights: ProjectHighlight[];

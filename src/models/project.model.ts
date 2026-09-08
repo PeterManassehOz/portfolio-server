@@ -49,6 +49,11 @@ const projectShowcaseSchema = new Schema<ProjectShowcase>(
       trim: true,
     },
 
+    whatItDoes: {
+      type: [String],
+      default: [],
+    },
+
     contribution: {
       type: [String],
       required: true,
@@ -57,6 +62,7 @@ const projectShowcaseSchema = new Schema<ProjectShowcase>(
 
     impact: {
       type: [String],
+      required: true,
       default: undefined,
     },
 

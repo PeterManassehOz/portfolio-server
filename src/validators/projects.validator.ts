@@ -13,6 +13,10 @@ const projectHighlightSchema = z.object({
 const projectShowcaseSchema = z.object({
   overview: z.string().trim().min(1),
 
+  whatItDoes: z
+    .array(z.string().trim().min(1))
+    .default([]),
+
   contribution: z
     .array(z.string().trim().min(1))
     .default([]),
